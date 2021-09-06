@@ -1,0 +1,23 @@
+{
+  "name": "dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dancing-Rose/dashboard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dancing-Rose/dashboard/issues"
+  },
+  "homepage": "https://github.com/Dancing-Rose/dashboard#readme",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "express": "^4.17.1"
+  }
+}
