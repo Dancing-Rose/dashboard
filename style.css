@@ -1,22 +1,100 @@
 .main-card {
-    display: grid;
-    grid-template-columns: 20% 80%;
-    margin: 70px 80px 0px;
-    height: 600px;
-    background-color: #ffffff;
-  }
-  body {
-    background-image: url("images/main.jpg");
-    background-size: cover;
-  }
+  display: grid;
+  grid-template-columns: 20% 80%;
+  margin: 70px 80px 0px;
+  height: 600px;
+  background-color: #ffffff;
+}
+body {
+  background-image: url("images/main.jpg");
+  background-size: cover;
+  position: relative;
+}
 
-  .top-header{
-      margin: 5px; 
-      display: flex; 
-      justify-content: flex-end;
-  }
+.top-header {
+  margin: 5px;
+  display: flex;
+  justify-content: flex-end;
+}
 
-  .search-bar input[type=text] {
-    border-radius: 25px;
-   }
-  
+.search-bar input[type="text"] {
+  border-radius: 25px;
+}
+
+.container-fluid {
+  position: relative;
+  top: 100px;
+  left: 50px;
+}
+
+.image {
+  position: absolute;
+  right: 200px;
+  bottom: 70px;
+}
+
+.select-image {
+  position: absolute;
+  top: 400px;
+  left: 420px;
+}
+
+.title {
+  position: absolute;
+  top: 20px;
+  left: 500px;
+}
+
+.first-image {
+  position: absolute;
+  top: 90px;
+  left: 370px;
+}
+
+.second-image {
+  position: absolute;
+  top: 90px;
+  left: 620px;
+}
+
+.third-image {
+  position: absolute;
+  top: 90px;
+  left: 870px;
+}
+
+.fourth-image {
+  position: absolute;
+  top: 90px;
+  left: 1120px;
+}
+
+.fifth-image {
+  position: absolute;
+  top: 350px;
+  left: 370px;
+}
+
+.sixth-image {
+  position: absolute;
+  top: 350px;
+  left: 620px;
+}
+
+.seventh-image {
+  position: absolute;
+  top: 350px;
+  left: 870px;
+}
+
+.eighth-image {
+  position: absolute;
+  top: 350px;
+  left: 1120px;
+}
+
+.first-classification {
+  position: absolute;
+  top: 130px;
+  left: 400px;
+}
