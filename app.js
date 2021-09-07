@@ -53,15 +53,16 @@ document.getElementById("testbtn").addEventListener("click", function (event) {
         }
     }
     const headers = {
-        'Access-Control-Allow-Origin': '*',
+        // 'Access-Control-Allow-Origin': '*',
         'Authorization': 'Bearer SpVtwFtX2xKjNScdZ4kCyHVr6cPZ3BDH',
     }
 
-    callAxios(headers, JSON.stringify(body));
-    // callFetch(headers, JSON.stringify(body));
+    callFetch(headers, JSON.stringify(body));
+    // callAxios(headers, JSON.stringify(body));
 });
 
 function callFetch(header, body) {
+    console.log('Try with fetch');
 
     fetch("http://40.119.238.158:80/api/v1/service/automobile-endpoint/score", {
         method: "POST",
@@ -71,12 +72,16 @@ function callFetch(header, body) {
         return response.text();
     }).then(function (data) {
         console.log(data);
+
+        // show text on UI
+        var paragraph = document.getElementById("result");
+        var text = document.createTextNode(data);
+        paragraph.appendChild(text);
     })
 }
 
 function callAxios(header, body) {
-    console.log('jadi');
-
+    console.log('Try with AXIOS');
 
     let reqOptions = {
         url: "http://40.119.238.158:80/api/v1/service/automobile-endpoint/score",
@@ -87,5 +92,10 @@ function callAxios(header, body) {
 
     axios.request(reqOptions).then(function (response) {
         console.log(response.data);
+
+        // show text on UI
+        var paragraph = document.getElementById("result");
+        var text = document.createTextNode(response.data);
+        paragraph.appendChild(text);
     })
 }
