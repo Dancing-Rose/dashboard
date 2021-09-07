@@ -27,9 +27,11 @@
       integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp"
       crossorigin="anonymous"
     />
+    <script src="./app.js"></script>
   </head>
 
   <body>
+
     <div class="main-card">
       <div class="col" style="background-color: #28ffbf">
         <nav class="nav flex-column">
@@ -47,8 +49,11 @@
               placeholder="Search"
               aria-label="Search"
             />
-            <button class="btn btn-outline-success float-right" type="submit">
+            <button onclick="()=> console.log('test')" class="btn btn-outline-success float-right" type="submit">
               Search
+            </button>
+            <button id="testbtn" class="btn btn-outline-success float-right" type="submit" onclick="callApi()">
+              Test
             </button>
           </form>
         </div>
