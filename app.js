@@ -46,7 +46,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
-  res.render("index");
+  res.sendFile(__dirname + '/index.html')
 });
 
 app.post("/upload", (req, res) => {
