@@ -12,21 +12,77 @@
 //     console.log("Server started on port 3000")
 // })
 
-const axios = require("axios").default;
+document.getElementById("testbtn").addEventListener("click", function (event) {
+    event.preventDefault()
 
-function callApi() {
-
-    let headersList = {
-        "Accept": "*/*",
-        "Authorization": "Bearer SpVtwFtX2xKjNScdZ4kCyHVr6cPZ3BDH",
-        "Content-Type": "application/json"
+    const body = {
+        "Inputs": {
+            "WebServiceInput0":
+                [
+                    {
+                        "symboling": "3",
+                        "normalized-losses": "1",
+                        "make": "alfa-romero",
+                        "fuel-type": "gas",
+                        "aspiration": "std",
+                        "num-of-doors": "two",
+                        "body-style": "convertible",
+                        "drive-wheels": "rwd",
+                        "engine-location": "front",
+                        "wheel-base": "88.6",
+                        "length": "168.8",
+                        "width": "64.1",
+                        "height": "48.8",
+                        "curb-weight": "2548",
+                        "engine-type": "dohc",
+                        "num-of-cylinders": "four",
+                        "engine-size": "130",
+                        "fuel-system": "mpfi",
+                        "bore": "3.47",
+                        "stroke": "2.68",
+                        "compression-ratio": "9",
+                        "horsepower": "111",
+                        "peak-rpm": "5000",
+                        "city-mpg": "21",
+                        "highway-mpg": "27",
+                        "price": "13495"
+                    }
+                ]
+        },
+        "GlobalParameters": {
+        }
     }
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Authorization': 'Bearer SpVtwFtX2xKjNScdZ4kCyHVr6cPZ3BDH',
+    }
+
+    callAxios(headers, JSON.stringify(body));
+    // callFetch(headers, JSON.stringify(body));
+});
+
+function callFetch(header, body) {
+
+    fetch("http://40.119.238.158:80/api/v1/service/automobile-endpoint/score", {
+        method: "POST",
+        headers: header,
+        body: body,
+    }).then(function (response) {
+        return response.text();
+    }).then(function (data) {
+        console.log(data);
+    })
+}
+
+function callAxios(header, body) {
+    console.log('jadi');
+
 
     let reqOptions = {
         url: "http://40.119.238.158:80/api/v1/service/automobile-endpoint/score",
         method: "POST",
-        headers: headersList,
-        data: "{\n    \"Inputs\": {\n        \"WebServiceInput0\":\n        [\n            {\n                \"symboling\": \"3\",\n                \"normalized-losses\": \"1\",\n                \"make\": \"alfa-romero\",\n                \"fuel-type\": \"gas\",\n                \"aspiration\": \"std\",\n                \"num-of-doors\": \"two\",\n                \"body-style\": \"convertible\",\n                \"drive-wheels\": \"rwd\",\n                \"engine-location\": \"front\",\n                \"wheel-base\": \"88.6\",\n                \"length\": \"168.8\",\n                \"width\": \"64.1\",\n                \"height\": \"48.8\",\n                \"curb-weight\": \"2548\",\n                \"engine-type\": \"dohc\",\n                \"num-of-cylinders\": \"four\",\n                \"engine-size\": \"130\",\n                \"fuel-system\": \"mpfi\",\n                \"bore\": \"3.47\",\n                \"stroke\": \"2.68\",\n                \"compression-ratio\": \"9\",\n                \"horsepower\": \"111\",\n                \"peak-rpm\": \"5000\",\n                \"city-mpg\": \"21\",\n                \"highway-mpg\": \"27\",\n                \"price\": \"13495\"\n            }\n        ]\n    },\n    \"GlobalParameters\": {\n    }\n}",
+        headers: header,
+        data: body,
     }
 
     axios.request(reqOptions).then(function (response) {
