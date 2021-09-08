@@ -64,7 +64,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + '/index.html')
+  res.render("index")
 });
 
 app.post("/upload", (req, res) => {
@@ -79,6 +79,7 @@ app.post("/upload", (req, res) => {
           msg: "Error: No File Selected!",
         });
       } else {
+        var file = req.file
         (async () => {
           const results = await predictor.classifyImage(
             "f04ae26a-ec18-4254-9d08-10fa220d46ac",
@@ -98,7 +99,7 @@ app.post("/upload", (req, res) => {
         })();
         res.render("index", {
           msg: "File Uploaded!",
-          file: `uploads/${req.file.filename}`,
+          file: `./uploads/${req.file.filename}`,
         });
       }
     }

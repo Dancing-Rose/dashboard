@@ -40,15 +40,16 @@
       </div>
       <div class="row">
         <div class="col">
-        <form id="file-upload-form" class="uploader">
+        <form id="file-upload-form" class="uploader" action="/upload" method="post" enctype="multipart/form-data">
           <input
             id="file-upload"
             type="file"
             name="fileUpload"
             accept="image/*"
           />
-
-          <label for="file-upload" id="file-drag">
+          <input class="file-path validate" type="text">
+          <button type="submit" name="button">Add</button>
+<!-- <label for="file-upload" id="file-drag">
             <img id="file-image" src="#" alt="Preview" class="hidden" />
             <div id="start">
               <i class="fa fa-download" aria-hidden="true"></i>
@@ -64,7 +65,7 @@
                 <span>0</span>%
               </progress>
             </div>
-          </label>
+          </label>  -->
         </form>
       </div>
     </div>
