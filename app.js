@@ -2,6 +2,24 @@ const express = require("express");
 const multer = require("multer");
 const ejs = require("ejs");
 const path = require("path");
+const util = require("util");
+const fs = require("fs");
+const PredictionApiClient = require("azure-cognitiveservices-customvision-prediction");
+
+const setTimeoutPromise = util.promisify(setTimeout);
+
+// Set up environment variables
+const dotenv = require("dotenv");
+dotenv.config();
+
+const predictionKey = process.env.PREDICTION_KEY;
+const dataRoot = "photos";
+
+const endpoint = "https://southcentralus.api.cognitive.microsoft.com";
+
+const publishIterationName = "Iteration3";
+
+const predictor = new PredictionApiClient(predictionKey, endpoint);
 
 // Set The Storage Engine
 const storage = multer.diskStorage({
@@ -61,6 +79,23 @@ app.post("/upload", (req, res) => {
           msg: "Error: No File Selected!",
         });
       } else {
+        (async () => {
+          const results = await predictor.classifyImage(
+            "f04ae26a-ec18-4254-9d08-10fa220d46ac",
+            publishIterationName,
+            req.file
+          );
+        
+          // Show results
+          console.log("Results:");
+          results.predictions.forEach((predictedResult) => {
+            console.log(
+              `\t ${predictedResult.tagName}: ${(
+                predictedResult.probability * 100.0
+              ).toFixed(2)}%`
+            );
+          });
+        })();
         res.render("index", {
           msg: "File Uploaded!",
           file: `uploads/${req.file.filename}`,
