@@ -13,6 +13,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 var currentFileName = "";
+var testFile;
 
 const predictionKey = process.env.PREDICTION_KEY;
 const dataRoot = "photos";
@@ -69,11 +70,10 @@ const fetchData = async (file) => {
       file
     );
     return results;
+  } catch (err) {
+    console.log(err);
   }
-  catch (err) {
-    console.log(err)
-  }
-}
+};
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -95,46 +95,30 @@ app.post("/upload", (req, res) => {
           msg: "Error: No File Selected!",
         });
       } else {
-        const results = async () => {
-          try {
-            const data = await fetchData(req.file);
-            console.log(data);
-          }
-          catch (err) {
-            console.log(err);
-          }
-          finally {
-            res.render("index", {
-              msg: "File Uploaded!",
-              file: `./uploads/${req.file.filename}`,
+        currentFileName = req.file.filename;
+        testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
+        (async () => {
+            const results = await predictor.classifyImage(
+              "f04ae26a-ec18-4254-9d08-10fa220d46ac",
+              publishIterationName,
+              testFile
+            );
+          
+            // Show results
+            console.log("Results:");
+            results.predictions.forEach((predictedResult) => {
+              console.log(
+                `\t ${predictedResult.tagName}: ${(
+                  predictedResult.probability * 100.0
+                ).toFixed(2)}%`
+              );
             });
-          }
-        }
-        results()
+          res.send("done");
+          })();
       }
     }
   });
 });
-
-// // console.log(currentFileName)
-// //const testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
-// (async () => {
-//   const results = await predictor.classifyImage(
-//     "f04ae26a-ec18-4254-9d08-10fa220d46ac",
-//     publishIterationName,
-//     req.file
-//   );
-
-//   // Show results
-//   console.log("Results:");
-//   results.predictions.forEach((predictedResult) => {
-//     console.log(
-//       `\t ${predictedResult.tagName}: ${(
-//         predictedResult.probability * 100.0
-//       ).toFixed(2)}%`
-//     );
-//   });
-// })();
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
