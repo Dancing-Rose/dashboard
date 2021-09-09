@@ -12,6 +12,8 @@ const setTimeoutPromise = util.promisify(setTimeout);
 const dotenv = require("dotenv");
 dotenv.config();
 
+var currentFileName = ""
+
 const predictionKey = process.env.PREDICTION_KEY;
 const dataRoot = "photos";
 
@@ -64,7 +66,7 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", function (req, res) {
-  res.render("index")
+  res.render("index");
 });
 
 app.post("/upload", (req, res) => {
@@ -79,24 +81,7 @@ app.post("/upload", (req, res) => {
           msg: "Error: No File Selected!",
         });
       } else {
-        var file = req.file
-        (async () => {
-          const results = await predictor.classifyImage(
-            "f04ae26a-ec18-4254-9d08-10fa220d46ac",
-            publishIterationName,
-            req.file
-          );
-        
-          // Show results
-          console.log("Results:");
-          results.predictions.forEach((predictedResult) => {
-            console.log(
-              `\t ${predictedResult.tagName}: ${(
-                predictedResult.probability * 100.0
-              ).toFixed(2)}%`
-            );
-          });
-        })();
+        currentFileName = req.file.filename;
         res.render("index", {
           msg: "File Uploaded!",
           file: `./uploads/${req.file.filename}`,
@@ -105,6 +90,25 @@ app.post("/upload", (req, res) => {
     }
   });
 });
+
+(async () => {
+  const results = await predictor.classifyImage(
+    "f04ae26a-ec18-4254-9d08-10fa220d46ac",
+    publishIterationName,
+    req.file
+  );
+
+  // Show results
+  console.log("Results:");
+  results.predictions.forEach((predictedResult) => {
+    console.log(
+      `\t ${predictedResult.tagName}: ${(
+        predictedResult.probability * 100.0
+      ).toFixed(2)}%`
+    );
+  });
+})();
+
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
