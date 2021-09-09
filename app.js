@@ -50,6 +50,7 @@ app.post('/classifyPaddyDisease', (req, res) => {
 
 app.listen(3000, function () {
     console.log("Server started on port 3000")
+    console.log("HIII")
     console.log("Goto http://localhost:3000")
     console.log("Test /requestCounterMeasure api on http://localhost:3000/requestCounterMeasure");
     console.log("Test /classifyPaddyDisease api on http://localhost:3000/classifyPaddyDisease");
