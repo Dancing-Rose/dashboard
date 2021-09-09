@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const axios = require("axios").default;
 const ejs = require("ejs");
 const path = require("path");
 const util = require("util");
@@ -62,17 +63,26 @@ function checkFileType(file, cb) {
 
 const app = express();
 
-const fetchData = async (file) => {
-  try {
-    const results = await predictor.classifyImage(
-      "f04ae26a-ec18-4254-9d08-10fa220d46ac",
-      publishIterationName,
-      file
-    );
-    return results;
-  } catch (err) {
-    console.log(err);
-  }
+let axiosConfig = {
+  headers: {
+    Authorization: "Bearer bBeGmd3Gi1H4f9tfH5XcnaAfwsf3yQCj",
+  },
+};
+
+const body = {
+  Inputs: {
+    WebServiceInput0: [
+      {
+        N: "1",
+        temperature: "1",
+        humidity: "233",
+        ph: "0.2",
+        disease: "13",
+        severity: "1",
+      },
+    ],
+  },
+  GlobalParameters: {},
 };
 
 app.set("view engine", "ejs");
@@ -82,7 +92,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", function (req, res) {
   res.render("index");
 });
-
+let scoredLabel = "";
 app.post("/upload", (req, res) => {
   upload(req, res, (err) => {
     if (err) {
@@ -98,23 +108,50 @@ app.post("/upload", (req, res) => {
         currentFileName = req.file.filename;
         testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
         (async () => {
-            const results = await predictor.classifyImage(
-              "f04ae26a-ec18-4254-9d08-10fa220d46ac",
-              publishIterationName,
-              testFile
+          const results = await predictor.classifyImage(
+            "f04ae26a-ec18-4254-9d08-10fa220d46ac",
+            publishIterationName,
+            testFile
+          );
+
+          // Show results
+          console.log("Results:");
+          var maxProb = 0;
+          var disease = "";
+
+          results.predictions.forEach((predictedResult) => {
+            if (predictedResult.probability * 100 > maxProb) {
+              maxProb = predictedResult.probability * 100;
+              disease = predictedResult.tagName;
+            }
+            console.log(
+              `\t ${predictedResult.tagName}: ${(
+                predictedResult.probability * 100.0
+              ).toFixed(2)}%`
             );
-          
-            // Show results
-            console.log("Results:");
-            results.predictions.forEach((predictedResult) => {
-              console.log(
-                `\t ${predictedResult.tagName}: ${(
-                  predictedResult.probability * 100.0
-                ).toFixed(2)}%`
-              );
+          });
+          axios
+            .post(
+              "http://20.197.106.3:80/api/v1/service/finaloutput/score",
+              body,
+              axiosConfig
+            )
+            .then((response) => {
+              scoredLabel =
+                response.data.Results.WebServiceOutput0[0]["ControlPrediction"];
+                res.render("disease", {
+                  percentage: maxProb,
+                  name: disease,
+                  label: scoredLabel,
+                });
+              //res.send({ result: scoredLabel });
+            })
+            .catch((err) => {
+              console.log("AXIOS ERR: ", err);
             });
-          res.send("done");
-          })();
+            //console.log(scoredLabel);
+          
+        })();
       }
     }
   });
