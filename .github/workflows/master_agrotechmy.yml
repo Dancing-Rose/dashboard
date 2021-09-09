@@ -19,7 +19,7 @@ jobs:
     - name: Set up Node.js version
       uses: actions/setup-node@v1
       with:
-        node-version: '14.x'
+        node-version: '12.x'
 
     - name: npm install, build, and test
       run: |
@@ -52,5 +52,5 @@ jobs:
       with:
         app-name: 'agrotechmy'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_2282b989ef614f67a5bec469eb08fc74 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_950ae8d661d246ebbda0850acae78832 }}
         package: .
