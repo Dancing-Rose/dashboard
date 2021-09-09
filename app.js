@@ -12,7 +12,7 @@ const setTimeoutPromise = util.promisify(setTimeout);
 const dotenv = require("dotenv");
 dotenv.config();
 
-var currentFileName = ""
+var currentFileName = "";
 
 const predictionKey = process.env.PREDICTION_KEY;
 const dataRoot = "photos";
@@ -91,6 +91,8 @@ app.post("/upload", (req, res) => {
   });
 });
 
+// console.log(currentFileName)
+//const testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
 (async () => {
   const results = await predictor.classifyImage(
     "f04ae26a-ec18-4254-9d08-10fa220d46ac",
@@ -108,7 +110,6 @@ app.post("/upload", (req, res) => {
     );
   });
 })();
-
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
