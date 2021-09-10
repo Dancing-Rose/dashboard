@@ -52,5 +52,5 @@ jobs:
       with:
         app-name: 'agrotechmy'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_950ae8d661d246ebbda0850acae78832 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1237dfe71d7b4ee7acae13e5ea284cc9 }}
         package: .
