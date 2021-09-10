@@ -16,6 +16,8 @@ dotenv.config();
 var currentFileName = "";
 var testFile;
 
+//Credentials for CustomVision AI
+
 const predictionKey = process.env.PREDICTION_KEY;
 const dataRoot = "photos";
 
@@ -39,7 +41,7 @@ const storage = multer.diskStorage({
 // Init Upload
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 4000000 },
+  limits: { fileSize: 6000000 },
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
@@ -61,14 +63,16 @@ function checkFileType(file, cb) {
   }
 }
 
+//Configuring express server
 const app = express();
 
+//Configuring Axios to call ML Azure API
 let axiosConfig = {
   headers: {
     Authorization: "Bearer bBeGmd3Gi1H4f9tfH5XcnaAfwsf3yQCj",
   },
 };
-
+//Dummy disease value for class type healthy
 const body = {
   Inputs: {
     WebServiceInput0: [
@@ -84,7 +88,7 @@ const body = {
   },
   GlobalParameters: {},
 };
-
+//Mock data for hispa to predict control method
 const hispa = {
   Inputs: {
     WebServiceInput0: [
@@ -100,7 +104,7 @@ const hispa = {
   },
   GlobalParameters: {},
 };
-
+//Mock data for bs to predict control method
 const bs = {
   Inputs: {
     WebServiceInput0: [
@@ -116,7 +120,7 @@ const bs = {
   },
   GlobalParameters: {},
 };
-
+//Mock data for lb to predict control method
 const lb = {
   Inputs: {
     WebServiceInput0: [
@@ -132,7 +136,7 @@ const lb = {
   },
   GlobalParameters: {},
 };
-
+//Set up EJS template engine and express server
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -148,7 +152,7 @@ app.get("/classify", function (req, res) {
 app.get("/prediction", function (req, res) {
   res.render("prediction");
 });
-
+//Disease control data
 const diseaseControl = [
   {
     disease: "hispa",
@@ -244,7 +248,7 @@ const diseaseControl = [
     ],
   },
 ];
-
+//To pass body to the API based on the disease
 function detectDisease(disease) {
   if (disease === "healthy") {
     return body;
@@ -273,57 +277,63 @@ app.post("/upload", (req, res) => {
         currentFileName = req.file.filename;
         testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
         (async () => {
-          const results = await predictor.classifyImage(
-            "99ea0ee6-7dc2-476e-98c0-4b6b13bd87fb",
-            publishIterationName,
-            testFile
-          );
-
-          // Show results
-          console.log("Results:");
-          var maxProb = 0;
-          var disease = "";
-          var applicableControl = [];
-
-          results.predictions.forEach((predictedResult) => {
-            if (predictedResult.probability * 100 > maxProb) {
-              maxProb = predictedResult.probability * 100;
-              disease = predictedResult.tagName;
-            }
-            console.log(
-              `\t ${predictedResult.tagName}: ${(
-                predictedResult.probability * 100.0
-              ).toFixed(2)}%`
+          try {
+            const results = await predictor.classifyImage(
+              "99ea0ee6-7dc2-476e-98c0-4b6b13bd87fb",
+              publishIterationName,
+              testFile
             );
-          });
-          axios
-            .post(
-              "http://20.197.106.3:80/api/v1/service/finaloutput/score",
-              detectDisease(disease),
-              axiosConfig
-            )
-            .then((response) => {
-              console.log("Dapat data");
-              scoredLabel =
-                response.data.Results.WebServiceOutput0[0]["ControlPrediction"];
-              diseaseControl.forEach(function (control) {
-                if (disease == control.disease) {
-                  applicableControl = control.control[scoredLabel];
-                }
-              });
 
-              res.render("prediction", {
-                percentage: maxProb,
-                name: disease,
-                label: scoredLabel,
-                file: currentFileName,
-                controls: applicableControl,
-              });
-              //res.send({ result: scoredLabel });
-            })
-            .catch((err) => {
-              console.log("AXIOS ERR: ", err);
+            // Show results
+            console.log("Results:");
+            var maxProb = 0;
+            var disease = "";
+            var applicableControl = [];
+
+            results.predictions.forEach((predictedResult) => {
+              if (predictedResult.probability * 100 > maxProb) {
+                maxProb = predictedResult.probability * 100;
+                disease = predictedResult.tagName;
+              }
+              console.log(
+                `\t ${predictedResult.tagName}: ${(
+                  predictedResult.probability * 100.0
+                ).toFixed(2)}%`
+              );
             });
+            axios
+              .post(
+                "http://20.197.106.3:80/api/v1/service/finaloutput/score",
+                detectDisease(disease),
+                axiosConfig
+              )
+              .then((response) => {
+                console.log("Dapat data");
+                scoredLabel =
+                  response.data.Results.WebServiceOutput0[0]["ControlPrediction"];
+                diseaseControl.forEach(function (control) {
+                  if (disease == control.disease) {
+                    applicableControl = control.control[scoredLabel];
+                  } else if (disease == "healthy") {
+                    applicableControl = { 3: ["Water the plant everyday"] };
+                    scoredLabel = 3;
+                  }
+                });
+
+                res.render("prediction", {
+                  percentage: maxProb,
+                  name: disease,
+                  label: scoredLabel,
+                  file: currentFileName,
+                  controls: applicableControl,
+                });
+              })
+              .catch((err) => {
+                console.log("AXIOS ERR: ", err);
+              });
+          } catch (err) {
+            res.render('error')
+          }
         })();
       }
     }
@@ -331,5 +341,5 @@ app.post("/upload", (req, res) => {
 });
 const port = process.env.PORT || 1337;
 app.listen(port, function () {
-  console.log("Server started on port 3000");
+  console.log("Server started on port 1337");
 });
