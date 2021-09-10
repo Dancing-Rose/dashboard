@@ -142,19 +142,19 @@
           <ul class="metismenu" id="menu">
             <!-- <li class="nav-label">Dashboard</li> -->
             <li>
-              <a href="index.html" aria-expanded="false">
+              <a href="/index" aria-expanded="false">
                 <i class="icon-speedometer menu-icon"></i
                 ><span class="nav-text">Home</span>
               </a>
             </li>
             <li>
-              <a href="classify.html" aria-expanded="false">
+              <a href="/classify" aria-expanded="false">
                 <i class="icon-grid menu-icon"></i
                 ><span class="nav-text">Plots</span>
               </a>
             </li>
             <li>
-              <a href="classify.html" aria-expanded="false">
+              <a href="/classify" aria-expanded="false">
                 <i class="icon-menu menu-icon"></i
                 ><span class="nav-text">Classification</span>
               </a>
@@ -189,10 +189,10 @@
                             <div class="stat-text">Disease Detected</div>
                             <div class="stat-digit gradient-3-text"><%=name%></div>
                         </div>
-                        <div class="progress mb-3">
-                            <div class="progress-bar gradient-3" style="width:<%=parseInt(percentage)%>;" role="progressbar"><span class="sr-only">50% Complete</span>
+                        <!-- <div class="progress mb-3">
+                            <div class="progress-bar gradient-3" style="width: <%= parseInt(percentage) %>;" role="progressbar"><span class="sr-only">50% Complete</span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -209,9 +209,9 @@
                                 <li class="list-group-item">Morbi leo risus</li>
                                 <li class="list-group-item">Porta ac consectetur ac</li>
                                 <li class="list-group-item">Vestibulum at eros</li> -->
-                                <% controls[label].forEach(function(control){ %>
+                                <% controls? controls[label].forEach(function(control){ %>
                                     <li class="list-group-item"><%=control%></li>
-                               <% }) %>
+                               <% }) : undefined %>
                             </ul>
                         </div>
                     </div>

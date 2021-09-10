@@ -19,7 +19,7 @@ var testFile;
 const predictionKey = process.env.PREDICTION_KEY;
 const dataRoot = "photos";
 
-const endpoint = "https://southcentralus.api.cognitive.microsoft.com";
+const endpoint = "https://leafdisease-prediction.cognitiveservices.azure.com/";
 
 const publishIterationName = "Iteration3";
 
@@ -39,7 +39,7 @@ const storage = multer.diskStorage({
 // Init Upload
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1000000 },
+  limits: { fileSize: 4000000 },
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
@@ -85,6 +85,54 @@ const body = {
   GlobalParameters: {},
 };
 
+const hispa = {
+  Inputs: {
+    WebServiceInput0: [
+      {
+        N: "22",
+        temperature: "27.409",
+        humidity: "94.844",
+        ph: "5.97",
+        disease: "0",
+        severity: "57",
+      },
+    ],
+  },
+  GlobalParameters: {},
+};
+
+const bs = {
+  Inputs: {
+    WebServiceInput0: [
+      {
+        N: "1",
+        temperature: "1",
+        humidity: "233",
+        ph: "0.2",
+        disease: "13",
+        severity: "1",
+      },
+    ],
+  },
+  GlobalParameters: {},
+};
+
+const lb = {
+  Inputs: {
+    WebServiceInput0: [
+      {
+        N: "17",
+        temperature: "22.767",
+        humidity: "92.170",
+        ph: "7.01",
+        disease: "2",
+        severity: "54",
+      },
+    ],
+  },
+  GlobalParameters: {},
+};
+
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -94,109 +142,120 @@ app.get("/", function (req, res) {
 });
 
 app.get("/classify", function (req, res) {
-  res.render("classify")
+  res.render("classify");
 });
 
 app.get("/prediction", function (req, res) {
   res.render("prediction");
-})
+});
 
 const diseaseControl = [
   {
-    "disease": "Hispa",
-    "control": [
+    disease: "hispa",
+    control: [
       {
         0: [
           "Use narrower plant spacing with greater leaf densities.",
-          "Infested leaves and shoots should be clipped and burned, or burried deep in the mud."
-        ]
+          "Infested leaves and shoots should be clipped and burned, or burried deep in the mud.",
+        ],
       },
       {
         1: [
           "There are small wasps that attack the eggs and larvae",
           "A reduviid bug eats upon the adults.",
-          "There are three fungal pathogens that attack the adults."
-        ]
+          "There are three fungal pathogens that attack the adults.",
+        ],
       },
       {
         2: [
           "Several chemical formulations containing the following active ingredients could be used to control populations: chlorpyriphos, malathion, cypermethrin, fenthoate.",
-          "Avoid excessive nitrogen fertilization in infested fields."
-        ]
+          "Avoid excessive nitrogen fertilization in infested fields.",
+        ],
       },
       {
         3: [
           "Avoid over fertilizing the field",
           "Close plant spacing results in greater leaf densities that can tolerate higher hispa numbers.",
           "To prevent egg laying of the pests, the shoot tips can be cut.",
-          "Clipping and burying shoots in the mud can reduce grub populations by 75−92%."
-        ]
-      }
-    ]
+          "Clipping and burying shoots in the mud can reduce grub populations by 75−92%.",
+        ],
+      },
+    ],
   },
   {
-    "disease": "Leaf Blast",
-    "control": [
+    disease: "leafblast",
+    control: [
       {
         0: [
           "Adjust planting time. Sow seeds early, when possible, after the onset of the rainy season.",
           "Flood the field as often as possible.",
-          "Split nitrogen fertilizer application in two or more treatments. Excessive use of fertilizer can increase blast intensity."
-        ]
+          "Split nitrogen fertilizer application in two or more treatments. Excessive use of fertilizer can increase blast intensity.",
+        ],
       },
       {
         1: [
           "Systemic fungicides like triazoles and strobilurins can be used judiciously for control to control blast.",
           "A fungicide application at heading can be effective in controlling the disease",
-          "Cheap sources of silicon, such as straws of rice genotypes with high silicon content, can be an alternative."
-        ]
+          "Cheap sources of silicon, such as straws of rice genotypes with high silicon content, can be an alternative.",
+        ],
       },
       {
         2: [
-          "Silicon fertilizers (e.g., calcium silicate) can be applied to soils that are silicon deficient to reduce blast. "
-        ]
+          "Silicon fertilizers (e.g., calcium silicate) can be applied to soils that are silicon deficient to reduce blast. ",
+        ],
       },
       {
         3: [
           "Adjust planting time. Sow seeds early, when possible, after the onset of the rainy season.",
-          "Flood the field as often as possible."
-        ]
-      }
-    ]
+          "Flood the field as often as possible.",
+        ],
+      },
+    ],
   },
   {
-    "disease": "Brown Spot",
-    "control": [
+    disease: "brownspot",
+    control: [
       {
         0: [
           "monitor soil nutrients regularly",
           "apply required fertilizers",
-          "for soils that are low in silicon, apply calcium silicate slag before planting"
-        ]
+          "for soils that are low in silicon, apply calcium silicate slag before planting",
+        ],
       },
       {
         1: [
           "Use resistant varieties",
           "Sprayed with spore suspension of T. harzianum",
-          "Trichoderma spp. has been shown to be effective for the control of brown spot disease and the increase of plant growth on rice"
-        ]
+          "Trichoderma spp. has been shown to be effective for the control of brown spot disease and the increase of plant growth on rice",
+        ],
       },
       {
         2: [
-          "Use fungicides (e.g., iprodione, propiconazole, azoxystrobin, trifloxystrobin) as seed treatments."
-        ]
+          "Use fungicides (e.g., iprodione, propiconazole, azoxystrobin, trifloxystrobin) as seed treatments.",
+        ],
       },
       {
         3: [
           "Treat seeds with hot water (53−54°C) for 10−12 minutes before planting, to control primary infection at the seedling stage.",
           "Use fungicides (e.g., iprodione, propiconazole, azoxystrobin, trifloxystrobin) as seed treatments.",
-          "To improve the results, place the seeds for 8 hours in cold water before the hot water treatment."
-        ]
-      }
-    ]
-  }
-]
+          "To improve the results, place the seeds for 8 hours in cold water before the hot water treatment.",
+        ],
+      },
+    ],
+  },
+];
 
+function detectDisease(disease) {
+  if (disease === "healthy") {
+    return body;
+  } else if (disease === "hispa") {
+    return hispa;
+  } else if (disease === "leafblast") {
+    return lb;
+  } else if (disease === "brownspot") {
+    return bs;
+  }
+}
 
 let scoredLabel = "";
 app.post("/upload", (req, res) => {
@@ -215,7 +274,7 @@ app.post("/upload", (req, res) => {
         testFile = fs.readFileSync(`public/uploads/${currentFileName}`);
         (async () => {
           const results = await predictor.classifyImage(
-            "f04ae26a-ec18-4254-9d08-10fa220d46ac",
+            "99ea0ee6-7dc2-476e-98c0-4b6b13bd87fb",
             publishIterationName,
             testFile
           );
@@ -224,7 +283,7 @@ app.post("/upload", (req, res) => {
           console.log("Results:");
           var maxProb = 0;
           var disease = "";
-          var applicableControl = []
+          var applicableControl = [];
 
           results.predictions.forEach((predictedResult) => {
             if (predictedResult.probability * 100 > maxProb) {
@@ -240,26 +299,26 @@ app.post("/upload", (req, res) => {
           axios
             .post(
               "http://20.197.106.3:80/api/v1/service/finaloutput/score",
-              body,
+              detectDisease(disease),
               axiosConfig
             )
             .then((response) => {
+              console.log("Dapat data");
               scoredLabel =
                 response.data.Results.WebServiceOutput0[0]["ControlPrediction"];
               diseaseControl.forEach(function (control) {
                 if (disease == control.disease) {
-                  applicableControl = control.control[scoredLabel]
-                  console.log(applicableControl)
-                  console.log("Hello")
+                  applicableControl = control.control[scoredLabel];
                 }
-              })
-                res.render("prediction", {
-                  percentage: maxProb,
-                  name: disease,
-                  label: scoredLabel,
-                  file: currentFileName,
-                  controls: applicableControl
-                });
+              });
+
+              res.render("prediction", {
+                percentage: maxProb,
+                name: disease,
+                label: scoredLabel,
+                file: currentFileName,
+                controls: applicableControl,
+              });
               //res.send({ result: scoredLabel });
             })
             .catch((err) => {
