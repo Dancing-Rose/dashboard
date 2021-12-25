@@ -7,4 +7,4 @@
     ```
     Server started on port 1337
     ```
-4. Go to `localhost:1337` in the browser
+4. Go to `localhost:1337` in browser
